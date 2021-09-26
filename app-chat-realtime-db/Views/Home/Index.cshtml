@@ -3,5 +3,43 @@
 }
 
 <div class="row">
-    Hello
+    <div class="col-xs-10">
+        <div class="chat-container">
+            Chat boxes
+        </div>
+    </div>
+    <div class="col-xs-2">
+        <div class="users-list">
+            Users List
+        </div>
+    </div>
 </div>
+
+<script>
+    $(function () {
+        var hub = $.connection.chatHub;
+
+        hub.client.broadcastUserToChat = function (users) {
+            $('.users-list').html('')
+            for (var i = 0; i < users.length; i++) {
+                let online = users[i].IsOnline ? '<i class="fa fa-circle"></i>' : "";
+                $('.users-list').append('<div id="UserBox-' + users[i].UserId + '"class="user-box" onclick="openChatBox(' + users[i].UserId + ')">\
+                    <h5>'+ users[i].Fullname + '</h5>\
+                    <span class="is-online">'+ online + '</span>\
+                    </div>');
+            }
+        }
+
+        hub.client.broadcastOnlineUser = function (userId) {
+            $('.users-list').find('#UserBox-' + userId + '').find('span[class="is-online"]').html('<i class="fa fa-circle"></i>');
+        }
+
+        hub.client.broadcastOfflineUser = function (userId) {
+            $('.users-list').find('#UserBox-' + userId + '').find('span[class="is-online"]').html('');
+        }
+
+        hub.connection.start().done(function () {
+            hub.server.getUserToChat();
+        })
+    })
+</script>

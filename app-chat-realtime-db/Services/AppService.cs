@@ -25,5 +25,56 @@ namespace app_chat_realtime_db.Services
             }
             return false;
         }
+
+        public List<UserDTO> GetUserToChat()
+        {
+            var userId = int.Parse(HttpContext.Current.User.Identity.Name);
+
+            return _context.Users.Include("UserConnections").Where(x => x.Id != userId).Select(x => new UserDTO
+            {
+                UserId = x.Id,
+                Username = x.Username,
+                Fullname = x.Fullname,
+                IsOnline = x.UserConnections.Count>0
+            }).ToList();
+        }
+
+        internal int AddUserConnection(Guid guid)
+        {
+            var userId = int.Parse(HttpContext.Current.User.Identity.Name);
+            _context.UserConnections.Add(new UserConnection
+            {
+                ConnectionId = guid,
+                UserId = userId
+            });
+            _context.SaveChanges();
+            return userId;
+        }
+
+        internal int RemoveUserConnection(Guid connectionId)
+        {
+            int userId = 0;
+            var current = _context.UserConnections.FirstOrDefault(x => x.ConnectionId == connectionId);
+            if (current != null)
+            {
+                userId = current.UserId ?? 0;
+                _context.UserConnections.Remove(current);
+                _context.SaveChanges();
+                return current.UserId ?? 0;
+            }
+            return userId;
+        }
+
+        internal IList<string> GetUserConnections(int userId)
+        {
+            return _context.UserConnections.Where(x => x.UserId == userId).Select(x => x.ConnectionId.ToString()).ToList();
+        }
+
+        internal void RemoveAllUserConnections(int userId)
+        {
+            var current = _context.UserConnections.Where(x => x.UserId == userId);
+            _context.UserConnections.RemoveRange(current);
+            _context.SaveChanges();
+        }
     }
 }

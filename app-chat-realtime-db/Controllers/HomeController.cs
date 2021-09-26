@@ -1,4 +1,5 @@
-﻿using app_chat_realtime_db.Models;
+﻿using app_chat_realtime_db.Hubs;
+using app_chat_realtime_db.Models;
 using app_chat_realtime_db.Services;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,10 @@ namespace app_chat_realtime_db.Controllers
         [HttpGet]
         public ActionResult Logout(LoginData loginData)
         {
+            int userId = int.Parse(User.Identity.Name);
+            new AppService().RemoveAllUserConnections(userId);
+            ChatHub.OfflineUser(userId);
+
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }

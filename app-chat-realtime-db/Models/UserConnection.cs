@@ -16,7 +16,7 @@ namespace app_chat_realtime_db.Models
     {
         public int Id { get; set; }
         public Nullable<int> UserId { get; set; }
-        public Nullable<int> ConnectionId { get; set; }
+        public Nullable<System.Guid> ConnectionId { get; set; }
     
         public virtual User User { get; set; }
     }

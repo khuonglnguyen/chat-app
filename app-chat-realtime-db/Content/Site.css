@@ -22,3 +22,24 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.users-list {
+    background-color: cadetblue;
+}
+
+.user-box {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    margin: 1px;
+    padding: 1px 5px
+}
+
+    .user-box:hover {
+        cursor: pointer;
+    }
+
+    .user-box i {
+        color: lawngreen;
+        margin: 10px
+    }

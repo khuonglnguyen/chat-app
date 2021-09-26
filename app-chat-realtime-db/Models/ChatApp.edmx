@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ChatAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ChatAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Message">
           <Key>
             <PropertyRef Name="Id" />
@@ -30,7 +30,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserId" Type="int" />
-          <Property Name="ConnectionId" Type="int" />
+          <Property Name="ConnectionId" Type="uniqueidentifier" />
         </EntityType>
         <Association Name="FK_Message_User">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -85,11 +85,27 @@
             <End Role="UserConnection" EntitySet="UserConnection" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ChatAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ChatAppEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Messages" EntityType="ChatAppModel.Message" />
+          <EntitySet Name="Users" EntityType="ChatAppModel.User" />
+          <EntitySet Name="UserConnections" EntityType="ChatAppModel.UserConnection" />
+          <AssociationSet Name="FK_Message_User" Association="ChatAppModel.FK_Message_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Message_User1" Association="ChatAppModel.FK_Message_User1">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserConnection_User" Association="ChatAppModel.FK_UserConnection_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserConnection" EntitySet="UserConnections" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Message">
           <Key>
             <PropertyRef Name="Id" />
@@ -99,8 +115,8 @@
           <Property Name="ToUser" Type="Int32" />
           <Property Name="Msg" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="User" Relationship="Self.FK_Message_User" FromRole="Message" ToRole="User" />
-          <NavigationProperty Name="User1" Relationship="Self.FK_Message_User1" FromRole="Message" ToRole="User" />
+          <NavigationProperty Name="User" Relationship="ChatAppModel.FK_Message_User" FromRole="Message" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="ChatAppModel.FK_Message_User1" FromRole="Message" ToRole="User" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -110,9 +126,9 @@
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Fullname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Messages" Relationship="Self.FK_Message_User" FromRole="User" ToRole="Message" />
-          <NavigationProperty Name="Messages1" Relationship="Self.FK_Message_User1" FromRole="User" ToRole="Message" />
-          <NavigationProperty Name="UserConnections" Relationship="Self.FK_UserConnection_User" FromRole="User" ToRole="UserConnection" />
+          <NavigationProperty Name="Messages" Relationship="ChatAppModel.FK_Message_User" FromRole="User" ToRole="Message" />
+          <NavigationProperty Name="Messages1" Relationship="ChatAppModel.FK_Message_User1" FromRole="User" ToRole="Message" />
+          <NavigationProperty Name="UserConnections" Relationship="ChatAppModel.FK_UserConnection_User" FromRole="User" ToRole="UserConnection" />
         </EntityType>
         <EntityType Name="UserConnection">
           <Key>
@@ -120,12 +136,12 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserId" Type="Int32" />
-          <Property Name="ConnectionId" Type="Int32" />
-          <NavigationProperty Name="User" Relationship="Self.FK_UserConnection_User" FromRole="UserConnection" ToRole="User" />
+          <Property Name="ConnectionId" Type="Guid" />
+          <NavigationProperty Name="User" Relationship="ChatAppModel.FK_UserConnection_User" FromRole="UserConnection" ToRole="User" />
         </EntityType>
         <Association Name="FK_Message_User">
-          <End Role="User" Type="Self.User" Multiplicity="0..1" />
-          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <End Type="ChatAppModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="ChatAppModel.Message" Role="Message" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="Id" />
@@ -136,8 +152,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Message_User1">
-          <End Role="User" Type="Self.User" Multiplicity="0..1" />
-          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <End Type="ChatAppModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="ChatAppModel.Message" Role="Message" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="Id" />
@@ -148,8 +164,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UserConnection_User">
-          <End Role="User" Type="Self.User" Multiplicity="0..1" />
-          <End Role="UserConnection" Type="Self.UserConnection" Multiplicity="*" />
+          <End Type="ChatAppModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="ChatAppModel.UserConnection" Role="UserConnection" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="Id" />
@@ -159,23 +175,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="ChatAppEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Messages" EntityType="Self.Message" />
-          <EntitySet Name="Users" EntityType="Self.User" />
-          <EntitySet Name="UserConnections" EntityType="Self.UserConnection" />
-          <AssociationSet Name="FK_Message_User" Association="Self.FK_Message_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Message" EntitySet="Messages" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Message_User1" Association="Self.FK_Message_User1">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Message" EntitySet="Messages" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserConnection_User" Association="Self.FK_UserConnection_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="UserConnection" EntitySet="UserConnections" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -185,30 +184,30 @@
           <EntitySetMapping Name="Messages">
             <EntityTypeMapping TypeName="ChatAppModel.Message">
               <MappingFragment StoreEntitySet="Message">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FromUser" ColumnName="FromUser" />
-                <ScalarProperty Name="ToUser" ColumnName="ToUser" />
-                <ScalarProperty Name="Msg" ColumnName="Msg" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Msg" ColumnName="Msg" />
+                <ScalarProperty Name="ToUser" ColumnName="ToUser" />
+                <ScalarProperty Name="FromUser" ColumnName="FromUser" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ChatAppModel.User">
               <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Fullname" ColumnName="Fullname" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Fullname" ColumnName="Fullname" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserConnections">
             <EntityTypeMapping TypeName="ChatAppModel.UserConnection">
               <MappingFragment StoreEntitySet="UserConnection">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ConnectionId" ColumnName="ConnectionId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
