@@ -166,10 +166,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ChatApp.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChatBoxModel.cs" />
     <Compile Include="Models\LoginData.cs" />
     <Compile Include="Models\Message.cs">
       <DependentUpon>ChatApp.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\MessageDTO.cs" />
     <Compile Include="Models\User.cs">
       <DependentUpon>ChatApp.tt</DependentUpon>
     </Compile>
@@ -235,6 +237,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Partials\ChatBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

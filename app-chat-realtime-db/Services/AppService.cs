@@ -35,7 +35,7 @@ namespace app_chat_realtime_db.Services
                 UserId = x.Id,
                 Username = x.Username,
                 Fullname = x.Fullname,
-                IsOnline = x.UserConnections.Count>0
+                IsOnline = x.UserConnections.Count > 0
             }).ToList();
         }
 
@@ -75,6 +75,28 @@ namespace app_chat_realtime_db.Services
             var current = _context.UserConnections.Where(x => x.UserId == userId);
             _context.UserConnections.RemoveRange(current);
             _context.SaveChanges();
+        }
+
+        internal ChatBoxModel GetChatBox(int toUserId)
+        {
+            var userId = int.Parse(HttpContext.Current.User.Identity.Name);
+            var toUser = _context.Users.FirstOrDefault(x => x.Id == toUserId);
+            var messages = _context.Messages.Where(x => (x.FromUser == userId && x.ToUser.Value == toUserId) || (x.FromUser == toUserId && x.ToUser == userId)).Select(x=>new MessageDTO { Message=x.Msg}).ToList();
+            return new ChatBoxModel
+            {
+                ToUser= ToUserDTO(toUser),
+                Messages = messages
+            };
+        }
+
+        public UserDTO ToUserDTO(User user)
+        {
+            return new UserDTO
+            {
+                Fullname = user.Fullname,
+                UserId = user.Id,
+                Username = user.Username
+            };
         }
     }
 }

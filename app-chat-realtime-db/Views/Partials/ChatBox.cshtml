@@ -1,0 +1,24 @@
+﻿@model app_chat_realtime_db.Models.ChatBoxModel
+
+<div class="chat-box" id="DVChatBox-@Model.ToUser.UserId">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chat-box-header">
+                <b>@Model.ToUser.Username</b>
+                <b><i class="fa fa-times" aria-hidden="true" onclick="CloseChatBox(this)"></i></b>
+                @Html.HiddenFor(x => x.ToUser.UserId, new { @id = "ToUserId" })
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="messages-list">
+                @foreach (var message in Model.Messages)
+                {
+                    <div class="dvmsg"><span class="msg">@message.Message</span></div>
+                }
+            </div>
+        </div>
+        <div class="col-xs-12 chat-box-input">
+            <textarea class="message-input form-control" onkeyup="sendMessage(this, event);"></textarea>
+        </div>
+    </div>
+</div>

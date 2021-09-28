@@ -43,3 +43,78 @@ textarea {
         color: lawngreen;
         margin: 10px
     }
+
+.chat-container {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+}
+
+.chat-box {
+    width: 250px;
+    min-width: 250px;
+    border: 1px solid;
+    margin: 15px;
+}
+
+.chat-box-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: deepskyblue;
+    padding: 5px 15px;
+}
+
+.fa-times:hover {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.messages-list {
+    padding: 25px;
+    height: 350px;
+    max-height: 350px;
+    overflow: auto;
+}
+
+.dvmsg {
+    padding: 1.5px;
+}
+
+.dvmsg-from {
+    display: flex;
+    justify-content: flex-start;
+}
+
+    .dvmsg-from .msg {
+        background-color: cornflowerblue;
+        color: white;
+    }
+
+.dvmsg-to {
+    display: flex;
+    justify-content: flex-end;
+}
+
+    .dvmsg-to .msg {
+        background-color: orange;
+        color: black;
+    }
+
+.msg {
+    padding: 8px;
+    width: auto;
+    border-radius: 20px;
+}
+
+.chat-box-input {
+    padding: 15px;
+}
+
+.message-input {
+    height: 60px;
+    min-height: 60px;
+    max-height: 60px;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+}

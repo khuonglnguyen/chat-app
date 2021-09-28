@@ -42,4 +42,18 @@
             hub.server.getUserToChat();
         })
     })
+
+    function openChatBox(toUserId) {
+        $.ajax({
+            url: '/Home/GetChatbox',
+            type: 'POST',
+            datatype: 'JSON',
+            contentType: 'application/json;charset=utf-8;',
+            data: JSON.stringify({ toUserId: toUserId }),
+            async: true,
+            success: function (res) {
+                $('.chat-container').append(res);
+            }
+        })
+    }
 </script>

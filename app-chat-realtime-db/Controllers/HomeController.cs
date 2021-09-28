@@ -57,5 +57,12 @@ namespace app_chat_realtime_db.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
+
+        [HttpPost]
+        public ActionResult GetChatBox(int toUserId)
+        {
+            ChatBoxModel chatBoxModel = new AppService().GetChatBox(toUserId);
+            return PartialView("~/Views/Partials/ChatBox.cshtml", chatBoxModel);
+        }
     }
 }
