@@ -37,5 +37,10 @@ namespace app_chat_realtime_db.Hubs
         {
             context.Clients.All.BroadcastOfflineUser(userId);
         }
+
+        public static void RecieveMessage(int fromUserId, int toUserId, string message)
+        {
+            context.Clients.Clients(new AppService().GetUserConnections(toUserId)).BroadcastRecieveMessage(fromUserId, message);
+        }
     }
 }

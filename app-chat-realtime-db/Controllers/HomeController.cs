@@ -64,5 +64,11 @@ namespace app_chat_realtime_db.Controllers
             ChatBoxModel chatBoxModel = new AppService().GetChatBox(toUserId);
             return PartialView("~/Views/Partials/ChatBox.cshtml", chatBoxModel);
         }
+
+        [HttpPost]
+        public ActionResult SendMessage(int toUserId, string message)
+        {
+            return Json(new AppService().SendMessage(toUserId, message));
+        }
     }
 }

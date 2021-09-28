@@ -41,6 +41,14 @@
         hub.connection.start().done(function () {
             hub.server.getUserToChat();
         })
+
+        hub.client.broadcastRecieveMessage = function (userId, message) {
+            if ($('#DVChatBox-' + userId).length === 0) {
+                openChatBox(userId);
+            } else {
+                $('#DVChatBox-' + userId).find('.messages-list').append('<div class="dvmsg dvmsg-to"><span class="msg">' + message + '</span></div>');
+            }
+        }
     })
 
     function openChatBox(toUserId) {
@@ -52,7 +60,12 @@
             data: JSON.stringify({ toUserId: toUserId }),
             async: true,
             success: function (res) {
-                $('.chat-container').append(res);
+                if ($('#DVChatBox-' + toUserId).length === 0) {
+                    $('.chat-container').append(res);
+                } else {
+                    $('.chat-container').find('#DVChatBox-' + toUserId).replaceWith(res);
+                }
+                $('#DVChatBox-' + toUserId).find('.messages-list').scrollTop(9999999999999999);
             }
         })
     }

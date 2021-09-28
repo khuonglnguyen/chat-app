@@ -1,4 +1,5 @@
-﻿using app_chat_realtime_db.Models;
+﻿using app_chat_realtime_db.Hubs;
+using app_chat_realtime_db.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,10 +82,12 @@ namespace app_chat_realtime_db.Services
         {
             var userId = int.Parse(HttpContext.Current.User.Identity.Name);
             var toUser = _context.Users.FirstOrDefault(x => x.Id == toUserId);
-            var messages = _context.Messages.Where(x => (x.FromUser == userId && x.ToUser.Value == toUserId) || (x.FromUser == toUserId && x.ToUser == userId)).Select(x=>new MessageDTO { Message=x.Msg}).ToList();
+            var messages = _context.Messages.Where(x => (x.FromUser == userId && x.ToUser.Value == toUserId) || (x.FromUser == toUserId && x.ToUser == userId))
+                .Select(x => new MessageDTO { Message = x.Msg, Class = x.FromUser == userId ? "from" : "to" })
+                .ToList();
             return new ChatBoxModel
             {
-                ToUser= ToUserDTO(toUser),
+                ToUser = ToUserDTO(toUser),
                 Messages = messages
             };
         }
@@ -97,6 +100,28 @@ namespace app_chat_realtime_db.Services
                 UserId = user.Id,
                 Username = user.Username
             };
+        }
+
+        internal bool SendMessage(int toUserId, string message)
+        {
+            try
+            {
+                var userId = int.Parse(HttpContext.Current.User.Identity.Name);
+                _context.Messages.Add(new Message
+                {
+                    FromUser = userId,
+                    ToUser = toUserId,
+                    Msg = message,
+                    Date = DateTime.Now
+                });
+                _context.SaveChanges();
+                ChatHub.RecieveMessage(userId, toUserId, message);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

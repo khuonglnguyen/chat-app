@@ -13,7 +13,7 @@
             <div class="messages-list">
                 @foreach (var message in Model.Messages)
                 {
-                    <div class="dvmsg"><span class="msg">@message.Message</span></div>
+                    <div class="dvmsg dvmsg-from-@message.Class"><span class="msg">@message.Message</span></div>
                 }
             </div>
         </div>
@@ -22,3 +22,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    function CloseChatBox(element) {
+        $(element).closest('.chat-box').remove();
+    }
+
+    function sendMessage(element, e) {
+        let message = $(element).val().trim();
+        if (!message) {
+            $(element).val('');
+            return;
+        }
+        let toUserId = $(element).closest('.chat-box').find('#ToUserId').val();
+        if (e.which === 13) {
+            $.ajax({
+                url: '/Home/SendMessage',
+                type: 'POST',
+                contentType: 'application/json;charset=uft-8',
+                data: JSON.stringify({ toUserId: toUserId, message: message }),
+                async: true,
+                success: function (res) {
+                    if (res === true) {
+                        $(element).closest('#DVChatBox-' + toUserId).find('.messages-list').append('<div class="dvmsg dvmsg-from"><span class="msg">' + message + '</span></div>');
+                        $(element).closest('#DVChatBox-' + toUserId).find('.messages-list').scrollTop(9999999999999999);
+                        $(element).val('');
+                    }
+                }
+            })
+        }
+    }
+</script>
